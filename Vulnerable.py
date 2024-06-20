@@ -1,7 +1,34 @@
-# vulnerability_scanner.py
 import os
 import json
 import socket
+import subprocess
+
+def get_software_version(software):
+    try:
+        # Use the `subprocess` module to run a command to get the software version
+        # For example, to get the Apache version, you can use the command "apache2 -v"
+        # Replace "apache2 -v" with the appropriate command for the software
+        output = subprocess.check_output([software, "-v"])
+        # Parse the output to extract the version number
+        version = output.decode("utf-8").splitlines()[0].split()[2]
+        return version
+    except subprocess.CalledProcessError:
+        # If the command fails, return a default value or handle the error
+        return "Unknown"
+
+def check_password_strength(password):
+    strength = 0
+    if len(password) < 8:
+        return strength
+    if re.search("[a-z]", password):
+        strength += 1
+    if re.search("[A-Z]", password):
+        strength += 1
+    if re.search("[0-9]", password):
+        strength += 1
+    if re.search("[!@#$%^&*()_+=-{};:'<>,./?]", password):
+        strength += 1
+    return strength
 
 def scan_system():
     # Scan system for open ports
@@ -42,6 +69,8 @@ def main():
     print("Vulnerabilities:")
     for key, value in vulnerabilities.items():
         print(f"{key}: {value}")
+    if not vulnerabilities:
+        print("No vulnerabilities found.")
 
 if __name__ == "__main__":
     main()
